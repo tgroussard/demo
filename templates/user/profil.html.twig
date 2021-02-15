@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mon profil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="card col-md-6 col-11 mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Mon profil</h5>
+                    {{ form_start(form) }}
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error|raw }}</div>
+                        {% endif %}
+
+                        {% if update %}
+                            <div class="alert alert-success">Profil mis à jour avec succès.</div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{ app.user.email }}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstname">Prénom</label>
+                            <input type="text" class="form-control" id="firstname" value="{{ app.user.firstname }}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Nom</label>
+                            <input type="text" class="form-control" id="name" value="{{ app.user.name }}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pseudo">Pseudo</label>
+                            <input type="text" class="form-control" id="pseudo" value="{{ app.user.pseudo }}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.phonenumber, 'Numéro de téléphone') }}
+                            {{ form_widget(form.phonenumber, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.password, 'Mot de passe') }}
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.confirmPassword, 'Confirmation du mot de passe') }}
+                            {{ form_widget(form.confirmPassword, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="campus">Campus</label>
+                            <input type="text" class="form-control" id="campus" value="{{ app.user.campus.name }}" readonly>
+                        </div>
+
+                        <button class="btn btn-lg btn-primary" type="submit">
+                            Enregistrer
+                        </button>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

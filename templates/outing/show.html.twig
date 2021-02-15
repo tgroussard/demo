@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Accueil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-12">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Afficher une sortie</h5>
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="name">Nom de la sortie</label>
+                                    <input type="text" class="form-control" id="name" value="{{ outing.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="date">Date de la sortie</label>
+                                    <input type="text" class="form-control" id="date" value="{{ outing.startDate|date("d/m/Y H:i") }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="datelr">Date limite d'inscription</label>
+                                    <input type="text" class="form-control" id="datelr" value="{{ outing.endRegisterDate|date("d/m/Y") }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="nbp">Nombre de place</label>
+                                    <input type="text" class="form-control" id="nbp" value="{{ outing.maxRegister }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dur">Durée</label>
+                                    <input type="text" class="form-control" id="dur" value="{{ outing.duration }} minutes" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="desc">Description et infos</label>
+                                    <textarea type="text" class="form-control" id="desc" readonly>{{ outing.description }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="campus">Campus</label>
+                                    <input type="text" class="form-control" id="campus" value="{{ outing.organizerSite.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="place">Lieu</label>
+                                    <input type="text" class="form-control" id="place" value="{{ outing.place.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="street">Rue</label>
+                                    <input type="text" class="form-control" id="street" value="{{ outing.place.street }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cp">Code postal</label>
+                                    <input type="text" class="form-control" id="cp" value="{{ outing.place.city.postalCode }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lat">Latitude</label>
+                                    <input type="text" class="form-control" id="lat" value="{{ outing.place.latitude }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="long">Longitude</label>
+                                    <input type="text" class="form-control" id="long" value="{{ outing.place.longitude }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-12">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Liste des participants inscrits</h5>
+                        <div class="row justify-content-between">
+                            <div class="col-12">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Pseudo</th>
+                                        <th scope="col">Nom</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for register in outing.registeredUsers %}
+                                        <tr>
+                                            <td><a href="{{ path('app_user_show', {'id': register.id}) }}">{{ register.pseudo }}</a></td>
+                                            <td>{{ register.firstname }} {{ register.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Accueil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Filtrer les sorties</h5>
+                        {{ form_start(form) }}
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error|raw }}</div>
+                        {% endif %}
+                        <div class="row justify-content-between">
+                            <div class="col-md-3 col-12">
+                                <div class="form-group">
+                                    {{ form_label(form.campus, 'Campus') }}
+                                    {{ form_widget(form.campus, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.name, 'Nom contient') }}
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    {{ form_label(form.dateStart, 'Entre') }}
+                                    <div class="row">
+                                        <div class="col">
+                                            {{ form_widget(form.dateStart.day, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col">
+                                            {{ form_widget(form.dateStart.month, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col">
+                                            {{ form_widget(form.dateStart.year, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.dateEnd, 'et') }}
+                                    <div class="row">
+                                        <div class="col">
+                                            {{ form_widget(form.dateEnd.day, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col">
+                                            {{ form_widget(form.dateEnd.month, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col">
+                                            {{ form_widget(form.dateEnd.year, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    {{ form_widget(form.checkOrganizer, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(form.checkOrganizer, 'Sorties dont je suis l\'organisateur/trice') }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_widget(form.checkRegister, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(form.checkRegister, 'Sorties auxquelles je suis inscrit/e') }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_widget(form.checkNotRegister, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(form.checkNotRegister, 'Sorties auxquelles je suis pas inscrit/e') }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_widget(form.checkPast, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(form.checkPast, 'Sorties passées') }}
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-lg btn-primary" type="submit">
+                            Rechercher
+                        </button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="card-title">Liste des sorties</h5>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-primary float-right mb-3" href="{{ path('app_outing_create') }}">Crée une sortie</a>
+                            </div>
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Nom de la sortie</th>
+                                <th scope="col">Date de la sortie</th>
+                                <th scope="col">Clôture</th>
+                                <th scope="col">Inscrits/places</th>
+                                <th scope="col">Etat</th>
+                                <th scope="col">Inscrit</th>
+                                <th scope="col">Organisateur</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for outing in outings %}
+                                <tr>
+                                    <td>{{ outing.name }}</td>
+                                    <td>{{ outing.startDate|date("d/m/Y H:i") }}</td>
+                                    <td>{{ outing.endRegisterDate|date("d/m/Y") }}</td>
+                                    <td>{{ outing.registeredUsers|length }}/{{ outing.maxRegister == 0 ? "∞" : outing.maxRegister }}</td>
+                                    <td>{{ outing.state.label }}</td>
+                                    <td>{{ outing.registeredUsers|filter(v => v == app.user)|length ? "x" : "" }}</td>
+                                    <td><a href="{{ path('app_user_show', {'id': outing.organizerUser.id}) }}">{{ outing.organizerUser.pseudo }}</a></td>
+                                    <td>
+                                        {% if outing.organizerUser == app.user %}
+                                            <a class="btn btn-primary" href="{{ path('app_outing_edit', {'id': outing.id}) }}">Modifier</a>
+                                        {% else %}
+                                            <a class="btn btn-primary" href="{{ path('app_outing_show', {'id': outing.id}) }}">Afficher</a>
+                                        {% endif %}
+
+                                        {% if outing.state.label == 'Ouverte' and outing.organizerUser != app.user %}
+                                            {% if outing.registeredUsers|filter(v => v == app.user)|length and (outing.state.label == 'Ouverte' or outing.state.label == 'Clôturée') %}
+                                                <a class="btn btn-primary" href="{{ path('app_outing_register', {'id': outing.id}) }}">Se désister</a>
+                                            {% elseif outing.registeredUsers|length < outing.maxRegister and date('now') < outing.endRegisterDate %}
+                                                <a class="btn btn-primary" href="{{ path('app_outing_register', {'id': outing.id}) }}">S'inscrire</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

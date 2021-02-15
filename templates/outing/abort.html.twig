@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Accueil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Annuler une sortie</h5>
+                        {{ form_start(form) }}
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="name">Nom de la sortie</label>
+                                    <input type="text" class="form-control" id="name" value="{{ outing.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="date">Date de la sortie</label>
+                                    <input type="text" class="form-control" id="date" value="{{ outing.startDate|date("d/m/Y H:i") }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="campus">Campus</label>
+                                    <input type="text" class="form-control" id="campus" value="{{ outing.organizerSite.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="place">Lieu</label>
+                                    <input type="text" class="form-control" id="place" value="{{ outing.place.name }} {{ outing.place.street }} {{ outing.place.city.postalCode }} {{ outing.place.city.name }}" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.abort_desc, 'Motif') }}
+                                    {{ form_widget(form.abort_desc, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-lg btn-primary" type="submit">
+                                    Enregistrer
+                                </button>
+                            </div>
+                            <div class="col">
+                                <a class="btn-primary btn btn-lg" href="{{ path('app_outing_edit', {'id': outing.id}) }}">Annuler</a>
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

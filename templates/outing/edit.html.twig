@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Accueil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Crée une sortie</h5>
+                        {{ form_start(form) }}
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error|raw }}</div>
+                        {% endif %}
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    {{ form_label(form.name, 'Nom de la sortie') }}
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.startDate, 'Date et heure de la sortie') }}
+                                    <div class="row">
+                                        <div class="col-4">
+                                            {{ form_widget(form.startDate.date.day, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.startDate.date.month, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.startDate.date.year, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.startDate.time.hour, {'attr': {'class': 'form-control mt-1'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.startDate.time.minute, {'attr': {'class': 'form-control mt-1'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.endRegisterDate, 'Date limite d\'inscription') }}
+                                    <div class="row">
+                                        <div class="col-4">
+                                            {{ form_widget(form.endRegisterDate.day, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.endRegisterDate.month, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-4">
+                                            {{ form_widget(form.endRegisterDate.year, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.maxRegister, 'Nombre de places') }}
+                                    {{ form_widget(form.maxRegister, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.duration, 'Durée') }}
+                                    {{ form_widget(form.duration, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.description, 'Description et infos') }}
+                                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    {{ form_label(form.organizerSite, 'Campus') }}
+                                    {{ form_widget(form.organizerSite, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.city, 'Ville') }}
+                                    {{ form_widget(form.city, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(form.place, 'Lieu') }}
+                                    {{ form_widget(form.place, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="street">Rue</label>
+                                    <input type="text" class="form-control" id="street" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cp">Code postal</label>
+                                    <input type="text" class="form-control" id="cp" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lat">Latitude</label>
+                                    <input type="text" class="form-control" id="lat" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lon">Longitude</label>
+                                    <input type="text" class="form-control" id="lon" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-lg btn-primary" type="submit">
+                                    Enregistrer
+                                </button>
+                            </div>
+                            {% if outing.state.label == 'Créee' %}
+                                <div class="col">
+                                    <a class="btn-primary btn btn-lg" href="{{ path('app_outing_pub', {'id': outing.id}) }}">Publier la sortie</a>
+                                </div>
+                            {% endif %}
+                            {% if outing.state.label == 'Créee' or outing.state.label == 'Ouverte' or outing.state.label == 'Clôturée' %}
+                                <div class="col">
+                                    <a class="btn-primary btn btn-lg" href="{{ path('app_outing_abort', {'id': outing.id}) }}">Supprimer</a>
+                                </div>
+                            {% endif %}
+                            <div class="col">
+                                <a class="btn-primary btn btn-lg" href="{{ path('app_home') }}">Annuler</a>
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let cities = [];
+        {% for city in cities %}
+        cities.push({id: {{ city.id }}, name: '{{ city.name }}', cp: '{{ city.postalCode }}'});
+        {% endfor %}
+
+        let places = [];
+        {% for place in places %}
+        places.push({name: '{{ place.name }}', street: '{{ place.street }}', lat: '{{ place.latitude }}', lon: '{{ place.longitude }}', city: {{ place.city.id }}});
+        {% endfor %}
+
+        function setCity(){
+            let city = cities.find(e => e.name === $("#outing_city option:selected").text());
+            $('#cp').val(city.cp);
+
+            let optionToSelect = null;
+
+            let placesOptions = $("#outing_place option");
+            for (let place of placesOptions) {
+                if(places.find(e => e.name === place.label).city !== city.id){
+                    $(place).hide();
+                } else {
+                    $(place).show();
+                    if(!optionToSelect){
+                        optionToSelect = place.value;
+                    }
+                }
+            }
+
+            $("#outing_place").val(optionToSelect);
+            setPlace();
+        }
+
+        function setPlace(){
+            let place = places.find(e => e.name === $("#outing_place option:selected").text())
+            $('#street').val(place.street);
+            $('#lat').val(place.lat);
+            $('#lon').val(place.lon);
+        }
+
+        $('#outing_city').on('change', setCity);
+        setCity();
+
+        $('#outing_place').on('change', setPlace);
+        setPlace();
+
+    </script>
+{% endblock %}

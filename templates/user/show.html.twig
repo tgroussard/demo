@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mon profil{% endblock %}
+
+{% block body %}
+    {% include 'nav.html.twig' %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="card col-md-6 col-11 mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.pseudo }}</h5>
+                    <p>Prénom : {{ user.firstname }}</p>
+                    <p>Nom : {{ user.name }}</p>
+                    <p>Téléphone : {{ user.phonenumber }}</p>
+                    <p>Email : {{ user.email }}</p>
+                    <p>Campus : {{ user.campus.name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
